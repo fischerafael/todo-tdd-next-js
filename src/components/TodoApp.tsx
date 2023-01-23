@@ -1,56 +1,25 @@
 import React from "react";
-import { ITodo } from "src/entities";
-import { completeTodo, createToDo, deleteTodo } from "src/usecases";
+import { useTodos } from "src/hooks/useTodos";
 
 export const TodoApp = () => {
-  const [todo, setTodo] = React.useState<string>("");
-  const [todos, setTodos] = React.useState<ITodo[]>([]);
-
-  const handleOnChange = (value: string) => {
-    setTodo(() => value);
-  };
-
-  const handleAddTodo = () => {
-    try {
-      const newTodo = createToDo(todo, todos);
-      setTodos((existing) => [...existing, newTodo]);
-      setTodo("");
-    } catch (e: any) {
-      alert(e);
-    }
-  };
-
-  const handleRemoveTodo = (id: string) => {
-    try {
-      const newTodos = deleteTodo(id, todos);
-      setTodos(newTodos);
-    } catch (e: any) {
-      alert(e);
-    }
-  };
-
-  const handleCompleteTodo = (id: string) => {
-    try {
-      const newTodos = completeTodo(id, todos);
-      setTodos(newTodos);
-    } catch (e: any) {
-      alert(e);
-    }
-  };
+  const { state, methods } = useTodos();
 
   return (
     <div>
-      <input value={todo} onChange={(e) => handleOnChange(e.target.value)} />
-      <button onClick={handleAddTodo}>Add Todo</button>
+      <input
+        value={state.todo}
+        onChange={(e) => methods.handleOnChange(e.target.value)}
+      />
+      <button onClick={methods.handleAddTodo}>Add Todo</button>
 
       <div>
-        {todos.map((todo) => (
+        {state.todos.map((todo) => (
           <div key={todo.id}>
             {todo.description} - {todo.isDone ? "Completed" : "Not Completed"}{" "}
-            <button onClick={() => handleCompleteTodo(todo.id)}>
+            <button onClick={() => methods.handleCompleteTodo(todo.id)}>
               Complete
             </button>
-            <button onClick={() => handleRemoveTodo(todo.id)}>
+            <button onClick={() => methods.handleRemoveTodo(todo.id)}>
               Remove Todo
             </button>
           </div>
